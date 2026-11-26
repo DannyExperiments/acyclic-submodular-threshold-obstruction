@@ -1,0 +1,6 @@
+B6: 14 incomparable pairs, 789 dependency arcs, 14 layers.
+Generated sublattice: 18 elements, 120 dependency arcs, induced subgraph.
+Three meet/join rows, 9 elementary squares, exact sign certificate.
+Prior example on 7 ground elements: adding the empty set admits an exact threshold; symmetric adaptation has 32 members, 3,494 arcs and 14 layers.
+Prior example on 8 ground elements: adding the empty set admits an exact threshold; symmetric adaptation has 32 members, 8,402 arcs and 16 layers.
+PASS: both ambient witnesses and the literature comparison.

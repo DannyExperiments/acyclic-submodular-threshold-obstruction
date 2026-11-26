@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "Please cite DannyExperiments and identify the version used."
+title: "An acyclic obstruction to submodular threshold representation"
+type: software
+authors:
+  - name: "DannyExperiments"
+repository-code: "https://github.com/DannyExperiments/acyclic-submodular-threshold-obstruction"
+version: "1.0.0"
+date-released: "2026-11-27"
+doi: "10.5281/zenodo.24570448"
+abstract: "A family of nine sets on six ground elements has an acyclic dependency digraph and is structurally submodular, yet no submodular function induces it as a strict sublevel set."
+keywords:
+  - "structural submodularity"
+  - "Boolean lattices"
+  - "dependency digraphs"
+  - "submodular threshold representation"
+  - "finite infeasibility certificates"

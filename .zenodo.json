@@ -1,0 +1,29 @@
+{
+  "title": "An acyclic obstruction to submodular threshold representation",
+  "upload_type": "software",
+  "creators": [
+    {
+      "name": "DannyExperiments"
+    }
+  ],
+  "description": "<p>A family of nine sets on six ground elements has an acyclic dependency digraph and is structurally submodular, yet no submodular function induces it as a strict sublevel set. The same family works in the eighteen-element sublattice it generates. This answers Elbracht, Kneip and Teegen's Question 4.5, also catalog Q335.</p><p>Fourteen topological layers certify every dependency arc, including arcs between vertices outside the family. Three meet and join inequalities sum to an inequality bounding three outside values by three inside values. A strict threshold forces the opposite comparison.</p><p>Earlier dependency-cycle examples establish nonrepresentability without acyclicity. A separate comparison adapts the published Simmons, Bansal and Cheriyan example by adjoining complements and the extrema, and checks the adapted family under the full dependency rule. The six-element witness uses ordinary meet and join inequalities directly. The appendix credits classical Farkas duality for the general finite certificate.</p><p>The exact replay checks the 789 and 120 dependency arcs in the two ambient lattices, the three-row cancellation and the literature comparison. Includes an offline explorer. Internally reviewed, not peer reviewed. No proof-assistant formalization is included.</p><p>Under human direction, ChatGPT Astra 6.2 (OpenAI) generated the discovery proof and original replay. OpenAI Codex performed the independent mathematical review. GPT-6.2 Sol (OpenAI) checked the literature and prepared this manuscript, expanded replay and worked illustration. DannyExperiments is the project's citation identity. The manuscript has no byline.</p><p>Release v1.0.0. https://github.com/DannyExperiments/acyclic-submodular-threshold-obstruction/releases/tag/v1.0.0</p>",
+  "keywords": [
+    "structural submodularity",
+    "Boolean lattices",
+    "dependency digraphs",
+    "submodular threshold representation",
+    "finite infeasibility certificates"
+  ],
+  "license": "other-closed",
+  "notes": "All rights reserved. Publicly downloadable files are supplied without a repository-wide reuse license.",
+  "publication_date": "2026-11-27",
+  "version": "1.0.0",
+  "access_right": "open",
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/DannyExperiments/acyclic-submodular-threshold-obstruction/releases/tag/v1.0.0",
+      "relation": "isSupplementTo",
+      "resource_type": "software"
+    }
+  ]
+}

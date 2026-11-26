@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Three inequalities, one obstruction</title>
+<style>
+:root{color-scheme:dark;--bg:#0a1525;--card:#12263d;--edge:#46627d;--text:#eff7ff;--muted:#bfd1e3;--inside:#68e3b9;--outside:#ffad7f;--cancel:#fae093}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:1rem/1.55 system-ui,sans-serif}
+main{max-width:68rem;margin:auto;padding:clamp(1rem,4vw,2.5rem)}
+h1{margin:0 0 .4rem;font-size:clamp(1.72rem,4.7vw,3rem);line-height:1.15}
+h2{font-size:1.35rem;line-height:1.25;margin:0 0 .65rem}
+p{margin:.35rem 0 .9rem}
+.intro{max-width:71ch;color:var(--muted)}
+.grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(16rem,.9fr);gap:1rem;align-items:stretch}
+.card{border:1px solid var(--edge);border-radius:1rem;padding:1rem;background:var(--card);min-width:0}
+.witness{margin-top:1rem}
+figure{margin:0}
+canvas{display:block;width:100%;height:auto;aspect-ratio:1.62}
+label{display:block;color:var(--muted);font-weight:600;margin-top:.45rem}
+select,input[type=range]{width:100%;margin:.2rem 0 .6rem;min-height:2.55rem;color:var(--text);font:inherit;accent-color:var(--inside)}
+select{border:1px solid var(--edge);border-radius:.45rem;padding:.23rem .5rem;background:#172e48}
+output{display:block;margin:.4rem 0;font-weight:700;min-height:3.15rem}
+figcaption{font-size:.94rem;color:var(--muted)}
+.key{white-space:nowrap;display:inline-block;margin-right:.65rem}
+.key::before{content:"";display:inline-block;width:.7rem;height:.7rem;border-radius:50%;background:currentColor;margin-right:.3rem}
+.inside{color:var(--inside)}
+.outside{color:var(--outside)}
+.cancel{color:var(--cancel)}
+.summary{border-top:1px solid var(--edge);padding-top:.55rem;margin-top:1.1rem}
+.arc-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(8.5rem,1fr));gap:.45rem}
+.arc-list li{border:1px solid var(--edge);border-radius:.5rem;padding:.45rem .65rem;color:var(--muted)}
+.arc-list strong{color:var(--text)}
+@media(max-width:720px){.grid{grid-template-columns:1fr}main{padding:1rem}}
+</style>
+<main>
+<h1>Three inequalities, one obstruction</h1>
+<p class="intro">Nine sets on six ground elements have an acyclic dependency digraph. Step through the three inequalities that make a submodular threshold impossible. Each number encodes a set by its six membership bits.</p>
+<div class="grid">
+<figure class="card">
+<canvas id="diamond" width="710" height="438" role="img" aria-label="Rotating lattice diamond"></canvas>
+<figcaption><span class="key inside">In family</span><span class="key outside">Outside</span><span class="key cancel">Cancels in sum</span><br>The diamond links represent set inclusion.</figcaption>
+</figure>
+<section class="card">
+<h2>Submodularity certificate</h2>
+<label for="step">Inequality</label>
+<select id="step"><option value="0">1 · Join 31, meet 1</option><option value="1">2 · Join 63, meet 12</option><option value="2">3 · Join 13, meet 0</option><option value="3">Add all three</option></select>
+<label for="angle">Rotate the diagram</label>
+<input id="angle" type="range" min="0" max="359" value="24">
+<output id="formula" aria-live="polite"></output>
+<p id="explanation"></p>
+<p class="summary">If a strict threshold k existed, every inside value would be less than k and each outside value at least k.</p>
+</section>
+</div>
+<section class="card witness">
+<h2>Inspect the dependency digraph</h2>
+<p class="intro">Choose a mask to see its outgoing arcs in the complete Boolean lattice on six elements. Every arc goes to a later layer.</p>
+<label for="point">Source mask</label>
+<select id="point"></select>
+<p id="vertex" aria-live="polite"></p>
+<ul id="arcs" class="arc-list"></ul>
+</section>
+</main>
+<script>
+"use strict";
+const P=new Set([1,5,7,9,25,44,45,47,61]);
+const rows=[[7,25,31,1],[31,44,63,12],[12,1,13,0]];
+const layers=[
+  [18,22,26,30,50,54,58],[10,14,19,20,28,34,38,42,48,51,52,56,62],
+  [2,6,16,24,32,35,49,55,59],[23,27,33,36,40,43,46,53,60],[11,21,31,39,57],
+  [3,12,17,37,41],[4,8],[0,15,29],[13,63],[7,25,44],[47,61],[5,9],[1],[45]
+];
+const rank=new Map(layers.flatMap((members,i)=>members.map(mask=>[mask,i])));
+const byId=id=>document.getElementById(id);
+const step=byId("step"),angle=byId("angle"),point=byId("point"),canvas=byId("diamond");
+const ctx=canvas.getContext("2d");
+const palette={ink:"#eff7ff",card:"#12263d",fill:"#183650",edge:"#617d9a",muted:"#bed1e0",inside:"#68e3b9",outside:"#ffad7f",cancel:"#fae093"};
+const cancelled=new Set([1,12,31]);
+const formulaText=byId("formula");
+function colored(mask) { return P.has(mask)?palette.inside:palette.outside; }
+function write(message,x,y,color,font) {
+  ctx.fillStyle=color;
+  ctx.font=font;
+  ctx.textAlign="center";
+  ctx.textBaseline="middle";
+  ctx.fillText(message,x,y);
+}
+function circle(x,y,radius,color,fill=true) {
+  ctx.beginPath();
+  ctx.arc(x,y,radius,0,2*Math.PI);
+  if (fill) {ctx.fillStyle=color; ctx.fill();}
+  else {ctx.strokeStyle=color;ctx.lineWidth=3;ctx.stroke();}
+}
+function renderDiamond() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  const chosen=Number(step.value);
+  angle.disabled=chosen===3;
+  if (chosen===3) {
+    write("Cancel f(1), f(12), and f(31)",355,67,palette.cancel,"700 34px system-ui");
+    write("OUTSIDE FAMILY",160,150,palette.muted,"650 26px system-ui");
+    write("INSIDE FAMILY",550,150,palette.muted,"650 26px system-ui");
+    write("f(0) + f(13) + f(63)",160,217,palette.outside,"700 31px system-ui");
+    write("≤",355,217,palette.ink,"700 47px system-ui");
+    write("f(7) + f(25) + f(44)",550,217,palette.inside,"700 31px system-ui");
+    write("at least 3k",160,290,palette.outside,"600 33px system-ui");
+    write("less than 3k",550,290,palette.inside,"600 33px system-ui");
+    write("Contradiction",355,380,palette.ink,"700 37px system-ui");
+    formulaText.textContent="f(0) + f(13) + f(63) ≤ f(7) + f(25) + f(44)";
+    byId("explanation").textContent="The left sum is at least 3k. The right sum is less than 3k.";
+  } else {
+    const [a,b,join,meet]=rows[chosen];
+    const turn=Number(angle.value)*Math.PI/180;
+    const project=([x,y,z])=>[355+166*(x*Math.cos(turn)+y*Math.sin(turn)),
+      219-114*z-53*(-x*Math.sin(turn)+y*Math.cos(turn))];
+    const positions=[[1,0,0],[-1,0,0],[0,0,1],[0,0,-1]].map(project);
+    ctx.beginPath();
+    [2,0,3,1].forEach((index,i)=>{
+      const [x,y]=positions[index];
+      if (i) ctx.lineTo(x,y); else ctx.moveTo(x,y);
+    });
+    ctx.closePath();ctx.fillStyle=palette.fill;ctx.fill();
+    ctx.strokeStyle=palette.edge;ctx.lineWidth=4;ctx.stroke();
+    [[a,"Input"],[b,"Input"],[join,"Union"],[meet,"Intersection"]].forEach(([mask,label],i)=>{
+      const [x,y]=positions[i];
+      if (cancelled.has(mask)) circle(x,y,34,palette.cancel,false);
+      circle(x,y,27,colored(mask));
+      write(String(mask),x,y,palette.card,"750 29px system-ui");
+      if (i>=2) write(label,x,y+(i===2?-58:59),palette.ink,"600 24px system-ui");
+    });
+    formulaText.textContent="f("+join+") + f("+meet+") ≤ f("+a+") + f("+b+")";
+    const names=[join,meet].map(mask=>P.has(mask)?"in the family":"outside the family");
+    byId("explanation").textContent="Union "+join+" is "+names[0]+". Intersection "+meet+" is "+names[1]+".";
+  }
+  canvas.setAttribute("aria-label",formulaText.textContent);
+}
+
+function renderArcs() {
+  const a=Number(point.value), targets=new Map();
+  if (!P.has(a)) P.forEach(b=>targets.set(b,"Outside to inside"));
+  P.forEach(c=>{
+    [[a|c,a&c,"Join"],[a&c,a|c,"Meet"]].forEach(([b,d,name])=>{
+      if (P.has(a)===P.has(b) && !P.has(d) && !targets.has(b))
+        targets.set(b,name+" with "+c);
+    });
+  });
+  const list=byId("arcs");
+  list.replaceChildren();
+  [...targets].sort(([a],[b])=>rank.get(a)-rank.get(b)||a-b).forEach(([b,reason])=>{
+    const item=document.createElement("li"), key=document.createElement("strong");
+    key.textContent="→ "+b+" · layer "+rank.get(b);
+    item.append(key,document.createElement("br"),reason);list.append(item);
+  });
+  byId("vertex").textContent="Mask "+a+" · layer "+rank.get(a)+" · "+targets.size+" outgoing arcs";
+}
+
+for(let a=0;a<64;a++){
+  const option=document.createElement("option");
+  option.value=String(a);
+  option.textContent=a+" · layer "+rank.get(a)+(P.has(a)?" · in family":" · outside");
+  point.append(option);
+}
+point.value="7";
+[step,angle].forEach(control=>control.addEventListener("input",renderDiamond));
+point.addEventListener("input",renderArcs);
+renderDiamond();
+renderArcs();
+</script>
+</html>
