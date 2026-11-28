@@ -4,6 +4,7 @@ A family of nine sets on six ground elements contains the union or intersection 
 
 [Paper PDF](paper/manuscript.pdf) · [LaTeX source](paper/manuscript.tex) · [Catalog Q335](https://github.com/10m-u/open-problems-catalog/blob/ca8d4d44ba3db527f19f28928c240168f545ecfe/problems/mathematics/combinatorics-graph-theory-part-1.md#q335) · [Elbracht, Kneip and Teegen, Question 4.5](https://arxiv.org/html/2103.13162v2#S4)
 
+[![Lean · six-bit obstruction](https://github.com/DannyExperiments/acyclic-submodular-threshold-obstruction/actions/workflows/lean.yml/badge.svg?branch=main)](https://github.com/DannyExperiments/acyclic-submodular-threshold-obstruction/actions/workflows/lean.yml)
 [![Repository verification](https://github.com/DannyExperiments/acyclic-submodular-threshold-obstruction/actions/workflows/verify.yml/badge.svg?branch=main)](https://github.com/DannyExperiments/acyclic-submodular-threshold-obstruction/actions/workflows/verify.yml)
 [![Replay verification](https://github.com/DannyExperiments/acyclic-submodular-threshold-obstruction/actions/workflows/replay.yml/badge.svg?branch=main)](https://github.com/DannyExperiments/acyclic-submodular-threshold-obstruction/actions/workflows/replay.yml)
 [![PDF build](https://github.com/DannyExperiments/acyclic-submodular-threshold-obstruction/actions/workflows/pdf.yml/badge.svg?branch=main)](https://github.com/DannyExperiments/acyclic-submodular-threshold-obstruction/actions/workflows/pdf.yml)
@@ -30,3 +31,7 @@ The paper checks all fourteen incomparable pairs and displays a topological orde
 Run the [exact checks](REPRODUCIBILITY.md) to reproduce the corner checks, all arcs, the three-row cancellation and the literature comparison. [Review status](STATUS.md) · [Claim scope](CLAIM_SCOPE_AND_LIMITATIONS.md) · [Research disclosure](AI_DISCLOSURE.md)
 
 DannyExperiments is the project's citation identity. [Release v1.0.0](https://github.com/DannyExperiments/acyclic-submodular-threshold-obstruction/releases/tag/v1.0.0) · [Version DOI](https://doi.org/10.5281/zenodo.24570448) · [Citation metadata](CITATION.cff)
+
+## Lean verification
+
+On the 64 six-bit masks, the specified nine-member family satisfies the corner condition and its dependency relation has no directed cycle. The three submodularity inequalities contradict a strict-threshold representation in the ordered algebraic interface used in the file. The correspondence with the powerset model, specialization to real values, and the eighteen-element sublattice are explained in the paper. [Lean source and replay](formalization/README.md)
